@@ -41,13 +41,19 @@ class TableOne extends Table {
 	}
 	
 	function findArea($load) {
+		if ($load < 100) throw new InvalidArgumentException('The minimal load is 100.');
 		$idx = $this->findInFirstColumn($load);
 		if ($idx == -1) return -1;
 		if ($this->firstColumn[$idx] == $load) {
 			return $this->secondColumn[$idx];
 		}
 		
-		return -1;
+		$loadMin = $this->firstColumn[$idx];
+		$loadMax = $this->firstColumn[$idx + 1];
+		$areaMin = $this->secondColumn[$idx];
+		$areaMax = $this->secondColumn[$idx + 1];
+		
+		return ($areaMax - $areaMin) / ($loadMax - $loadMin) * ($load - $loadMin) + $areaMin;		
 	}
 }
 
