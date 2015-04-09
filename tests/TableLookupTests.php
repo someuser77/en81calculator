@@ -15,6 +15,22 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
         $this->assertEquals(0.90, $result);
     }
 	
+	public function testLowerBoundItemLookup()
+    {
+		$result = $this->tableOne->findArea(100);
+		
+        // Assert
+        $this->assertEquals(0.37, $result);
+    }
+	
+	public function testUpperBoundItemLookup()
+    {
+		$result = $this->tableOne->findArea(2500);
+		
+        // Assert
+        $this->assertEquals(5.00, $result);
+    }
+	
 	public function testIntermediateAreaLookup()
     {
 		$load = 550;
