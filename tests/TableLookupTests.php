@@ -9,10 +9,10 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
 	
 	public function testExactItemLookup()
     {
-		$result = $this->tableOne->findArea(100);
+		$result = $this->tableOne->findArea(300);
 		
         // Assert
-        $this->assertEquals(0.37, $result, $result);
+        $this->assertEquals(0.90, $result, $result);
     }
 }
 
