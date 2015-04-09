@@ -40,20 +40,32 @@ class TableOne extends Table {
 		parent::__construct($this->load, $this->area);
 	}
 	
+	private function getAreaBeyondTable($load) {
+		$extraLoad = $load - $this->load[count($this->load) - 1];
+		return $this->area[count($this->area) - 1] + ceil($extraLoad / 100.0) * 0.16;
+	}
+	
 	function findArea($load) {
 		if ($load < 100) throw new InvalidArgumentException('The minimal load is 100.');
+		
 		$idx = $this->findInFirstColumn($load);
-		if ($idx == -1) return -1;
-		if ($this->firstColumn[$idx] == $load) {
-			return $this->secondColumn[$idx];
+		
+		if ($idx == -1 && $load > $this->load[count($this->load) - 1]){
+			return $this->getAreaBeyondTable($load);
 		}
 		
-		$loadMin = $this->firstColumn[$idx];
-		$loadMax = $this->firstColumn[$idx + 1];
-		$areaMin = $this->secondColumn[$idx];
-		$areaMax = $this->secondColumn[$idx + 1];
+		if ($idx == -1) return -1;
 		
-		return ($areaMax - $areaMin) / ($loadMax - $loadMin) * ($load - $loadMin) + $areaMin;		
+		if ($this->load[$idx] == $load) {
+			return $this->area[$idx];
+		}
+		
+		$loadMin = $this->load[$idx];
+		$loadMax = $this->load[$idx + 1];
+		$areaMin = $this->area[$idx];
+		$areaMax = $this->area[$idx + 1];		
+		
+		return ($areaMax - $areaMin) / ($loadMax - $loadMin) * ($load - $loadMin) + $areaMin;
 	}
 }
 
