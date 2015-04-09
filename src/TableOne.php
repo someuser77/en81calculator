@@ -42,13 +42,17 @@ class TableOne extends Table {
 	
 	private function getAreaBeyondTable($load) {
 		$extraLoad = $load - $this->load[count($this->load) - 1];
+		// beyond 2500 we add 0.16 for each extra 100 kg. 
 		return $this->area[count($this->area) - 1] + ceil($extraLoad / 100.0) * 0.16;
 	}
 	
+	private function findInLoadColumn($load) { return $this->findInFirstColumn($load); }
+	private function findInAreaColumn($area) { return $this->findInSecondColumn($area); }
+	
 	function findArea($load) {
-		if ($load < 100) throw new InvalidArgumentException('The minimal load is 100.');
+		if ($load < $this->load[0]) throw new InvalidArgumentException('The minimal load is '.$load[0]);
 		
-		$idx = $this->findInFirstColumn($load);
+		$idx = $this->findInLoadColumn($load);
 		
 		if ($idx == -1 && $load > $this->load[count($this->load) - 1]){
 			return $this->getAreaBeyondTable($load);
@@ -67,6 +71,8 @@ class TableOne extends Table {
 		
 		return ($areaMax - $areaMin) / ($loadMax - $loadMin) * ($load - $loadMin) + $areaMin;
 	}
+	
+	
 }
 
 ?>
