@@ -9,26 +9,27 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
 	
 	public function testExactItemLookup()
     {
-		$result = $this->tableOne->findArea(300);
-		
+		$actual = $this->tableOne->findArea(300);
+		$expected = new TableOneValuePair(300, 0.90, false);
         // Assert
-        $this->assertEquals(0.90, $result);
+        $this->assertEquals($expected, $actual);
+		
     }
 	
 	public function testLowerBoundItemLookup()
     {
-		$result = $this->tableOne->findArea(100);
-		
+		$actual = $this->tableOne->findArea(100);
+		$expected = new TableOneValuePair(100, 0.37, false);
         // Assert
-        $this->assertEquals(0.37, $result);
+        $this->assertEquals($expected, $actual);
     }
 	
 	public function testUpperBoundItemLookup()
     {
-		$result = $this->tableOne->findArea(2500);
-		
+		$actual = $this->tableOne->findArea(2500);
+		$expected = new TableOneValuePair(2500, 5.0, false);
         // Assert
-        $this->assertEquals(5.00, $result);
+        $this->assertEquals($expected, $actual);
     }
 	
 	public function testIntermediateAreaLookup()
@@ -39,22 +40,30 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
 		$y1 = 1.45;
 		$x2 = 600;
 		$y2 = 1.60;
-		$expected = ($y2 - $y1) / ($x2 - $x1) * ($load - $x1) + $y1;
+		$expectedArea = ($y2 - $y1) / ($x2 - $x1) * ($load - $x1) + $y1;
+		$expected = new TableOneValuePair($load, $expectedArea, true, $x2, $y2, false);
         // Assert
         $this->assertEquals($expected, $actual);
     }
 	
-	public function testExceedingAreaLookup()
+	public function testAreaLookupWithOneExtrapolation()
 	{
-		$result = $this->tableOne->findArea(2503);
-		
+		$load = 2545;
+		$result = $this->tableOne->findArea($load);
+		$expectedArea = 5.0 + (5.16 - 5.0) / (2600 - 2500) * ($load - 2500);
+		$expected = new TableOneValuePair($load, $expectedArea, true, 2600, 5.16, true);
         // Assert
-        $this->assertEquals(5.16, $result);
+        $this->assertEquals($expected, $result);
 	}
 	
-	public function testIntermediateLoadLookup()
+	public function testAreaLookupWithTwoExtrapolation()
 	{
-	
+		$load = 2699;
+		$result = $this->tableOne->findArea($load);
+		$expectedArea = 5.16 + (5.32 - 5.16) / (2700 - 2600) * ($load - 2600);
+		$expected = new TableOneValuePair($load, $expectedArea, true, 2700, 5.32, true);
+        // Assert
+        $this->assertEquals($expected, $result);
 	}
 	
 	/**

@@ -13,6 +13,20 @@ abstract class Table {
 		$this->secondColumn = $secondColumn;
 	}
 	
+	private function getSlope($lower_first, $higher_first, $lower_second, $higher_second) {
+		return ($higher_second - $lower_second) / ($higher_first - $lower_first);
+	}
+	
+	protected function interpolateSecondColumn($lower_first, $higher_first, $lower_second, $higher_second, $valueInFirst) {
+		$m = $this->getSlope($lower_first, $higher_first, $lower_second, $higher_second);
+		return $m * ($valueInFirst - $lower_first) + $lower_second;
+	}
+	
+	protected function interpolateFirstColumn($lower_first, $higher_first, $lower_second, $higher_second, $valueInSecond) {
+		$m = $this->getSlope($lower_first, $higher_first, $lower_second, $higher_second);
+		return (1.0/$m) * ($valueInSecond - $lower_second) + $lower_first;
+	}
+	
 	protected function findInFirstColumn($elem) {
 		return $this->find($this->firstColumn, $elem);
 	}

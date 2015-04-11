@@ -1,7 +1,47 @@
 <?php
+
+class TableOneValue {
+	
+	private $load;
+	private $area;
+	private $isExtrapolated;
+	
+	function __construct($load, $area, $isExtrapolated) {
+		$this->load = $load;
+		$this->area = $area;
+		$this->isExtrapolated = $isExtrapolated;
+	}
+	
+	public function getLoad() { return $this->load; }
+	public function getArea() { return $this->area; }
+	public function isExtrapolated() { return $this->isExtrapolated; }
+}
+
+class TableOneValuePair {
+	private $value;
+	private $next;
+	
+	public function __construct($load, $area, $isExtrapolated, $nextLoad = null, $nextArea = null, $isNextExtrapolated = null) {
+		$this->value = new TableOneValue($load, $area, $isExtrapolated);
+		if ($nextLoad != null && $nextArea != null && $isNextExtrapolated != null) {
+			$this->next = new TableOneValue($nextLoad, $nextArea, $isNextExtrapolated);
+		} else {
+			$this->next = null;
+		}
+	}
+	
+	public function getLoad() { return $this->value->getLoad(); }
+	public function getArea() { return $this->value->getArea(); }
+	public function isExtrapolated() { return $this->value->isExtrapolated; }
+	public function getNextValue() { return $this->value; }
+	public function isNextExtrapolated() { return $this->isNextExtrapolated; }
+}
+
 class TableOne extends Table {
 	var $load;
 	var $area;
+	var $maxDefinedLoad;
+	var $maxDefinedArea;
 	
 	function __construct() {
 		$table = [
@@ -37,42 +77,61 @@ class TableOne extends Table {
 	
 		$this->load = array_keys($table);
 		$this->area = array_values($table);
+		$this->maxDefinedLoad = $this->load[count($this->load) - 1];
+		$this->maxDefinedArea = $this->area[count($this->area) - 1];
+		
 		parent::__construct($this->load, $this->area);
-	}
-	
-	private function getAreaBeyondTable($load) {
-		$extraLoad = $load - $this->load[count($this->load) - 1];
-		// beyond 2500 we add 0.16 for each extra 100 kg. 
-		return $this->area[count($this->area) - 1] + ceil($extraLoad / 100.0) * 0.16;
 	}
 	
 	private function findInLoadColumn($load) { return $this->findInFirstColumn($load); }
 	private function findInAreaColumn($area) { return $this->findInSecondColumn($area); }
 	
+	private function intrapolateArea($load_low, $load_high, $area_low, $area_high, $load) {
+		return $this->interpolateSecondColumn($load_low, $load_high, $area_low, $area_high, $load);
+	}
+	
+	private function intrapolateLoad($load_low, $load_high, $area_low, $area_high, $area) {
+		return $this->interpolateFirstColumn($load_low, $load_high, $area_low, $area_high, $area);
+	}
+	
 	function findArea($load) {
 		if ($load < $this->load[0]) throw new InvalidArgumentException('The minimal load is '.$load[0]);
 		
 		$idx = $this->findInLoadColumn($load);
+		$found = !($idx < 0);
 		
-		if ($idx == -1 && $load > $this->load[count($this->load) - 1]){
-			return $this->getAreaBeyondTable($load);
+		if ($found) {
+			if ($this->load[$idx] == $load)
+				return new TableOneValuePair($load, $this->area[$idx], false);
+				
+			// interpolate inside table	
+			$loadMin = $this->load[$idx];
+			$loadMax = $this->load[$idx + 1];
+			$areaMin = $this->area[$idx];
+			$areaMax = $this->area[$idx + 1];
+			$upperBoundIntrapolated = false;
+		} else {
+			// interpolate outside table
+			if ($load < $this->maxDefinedLoad) {
+				throw new LogicalException('The load '.$load.' was smaller than the last element in the table but no match was found.');
+			}
+			
+			$loadMin = floor($load / 100.0) * 100;
+			$loadMax = ceil($load / 100.0) * 100;
+			
+			$addedSlotMin = ($loadMin - $this->maxDefinedLoad) / 100;
+			$addedSlotMax = ($loadMax - $this->maxDefinedLoad) / 100;
+			
+			$areaMin = $this->maxDefinedArea + $addedSlotMin * 0.16;
+			$areaMax = $this->maxDefinedArea + $addedSlotMax * 0.16;
+			
+			$upperBoundIntrapolated = true;
 		}
 		
-		if ($idx == -1) return -1;
+		$area = $this->intrapolateArea($loadMin, $loadMax, $areaMin, $areaMax, $load);
 		
-		if ($this->load[$idx] == $load) {
-			return $this->area[$idx];
-		}
-		
-		$loadMin = $this->load[$idx];
-		$loadMax = $this->load[$idx + 1];
-		$areaMin = $this->area[$idx];
-		$areaMax = $this->area[$idx + 1];		
-		
-		return ($areaMax - $areaMin) / ($loadMax - $loadMin) * ($load - $loadMin) + $areaMin;
+		return new TableOneValuePair($load, $area, true, $loadMax, $areaMax, $upperBoundIntrapolated);
 	}
-	
-	
 }
 
 ?>
