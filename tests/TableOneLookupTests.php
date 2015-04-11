@@ -7,7 +7,7 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
 		$this->tableOne = new TableOne();
 	}
 	
-	public function testExactItemLookup()
+	public function testExactAreaLookup()
     {
 		$actual = $this->tableOne->findArea(300);
 		$expected = new TableOneValuePair(300, 0.90, false);
@@ -16,7 +16,7 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
 		
     }
 	
-	public function testLowerBoundItemLookup()
+	public function testLowerBoundAreaLookup()
     {
 		$actual = $this->tableOne->findArea(100);
 		$expected = new TableOneValuePair(100, 0.37, false);
@@ -24,7 +24,7 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $actual);
     }
 	
-	public function testUpperBoundItemLookup()
+	public function testUpperBoundAreaLookup()
     {
 		$actual = $this->tableOne->findArea(2500);
 		$expected = new TableOneValuePair(2500, 5.0, false);
@@ -69,7 +69,7 @@ class TableLookupTests extends PHPUnit_Framework_TestCase {
 	/**
      * @expectedException InvalidArgumentException
      */
-	public function testBelowMinimalLoad()
+	public function testAreaBelowMinimal()
     {
 		$result = $this->tableOne->findArea(10);
     }
