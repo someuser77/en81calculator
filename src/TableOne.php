@@ -132,6 +132,45 @@ class TableOne extends Table {
 		
 		return new TableOneValuePair($load, $area, true, $loadMax, $areaMax, $upperBoundIntrapolated);
 	}
+	
+	function findLoad($area) {
+		if ($area < $this->area[0]) throw new InvalidArgumentException('The minimal area is '.$area[0]);
+		
+		$idx = $this->findInAreaColumn($area);
+		$found = !($idx < 0);
+		
+		if ($found) {
+			if ($this->area[$idx] == $area)
+				return new TableOneValuePair($this->load[$idx], $area, false);
+				
+			// interpolate inside table	
+			$loadMin = $this->load[$idx];
+			$loadMax = $this->load[$idx + 1];
+			$areaMin = $this->area[$idx];
+			$areaMax = $this->area[$idx + 1];
+			$upperBoundIntrapolated = false;
+		} else {
+			// interpolate outside table
+			if ($area < $this->maxDefinedArea) {
+				throw new LogicalException('The area '.$area.' was smaller than the last element in the table but no match was found.');
+			}
+			
+			$areaMin = $this->maxDefinedArea + floor(($area - 5.0) / 0.16) * 0.16;
+			$areaMax = $this->maxDefinedArea + ceil(($area - 5.0) / 0.16) * 0.16;
+			
+			$addedSlotMin = floor(($area - 5.0) / 0.16);
+			$addedSlotMax = ceil(($area - 5.0) / 0.16);
+			
+			$loadMin = $this->maxDefinedLoad + $addedSlotMin * 100;
+			$loadMax = $this->maxDefinedLoad + $addedSlotMax * 100;
+			
+			$upperBoundIntrapolated = true;
+		}
+		
+		$load = $this->intrapolateLoad($loadMin, $loadMax, $areaMin, $areaMax, $area);
+		
+		return new TableOneValuePair($load, $area, true, $loadMax, $areaMax, $upperBoundIntrapolated);
+	}
 }
 
 ?>
