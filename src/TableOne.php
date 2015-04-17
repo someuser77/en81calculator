@@ -32,9 +32,10 @@ class TableOneValuePair {
 	
 	public function getLoad() { return $this->value->getLoad(); }
 	public function getArea() { return $this->value->getArea(); }
-	public function isExtrapolated() { return $this->value->isExtrapolated; }
-	public function getNextValue() { return $this->value; }
-	public function isNextExtrapolated() { return $this->isNextExtrapolated; }
+	public function isExtrapolated() { return $this->value->isExtrapolated(); }
+	public function getNextLoad() { return $this->next->getLoad(); }
+	public function getNextArea() { return $this->next->getArea(); }
+	public function isNextExtrapolated() { return $this->next->isExtrapolated(); }
 }
 
 class TableOne extends Table {

@@ -131,6 +131,17 @@ class TableOneLookupTests extends PHPUnit_Framework_TestCase {
     {
 		$result = $this->tableOne->findArea(10);
     }
+	
+	public function testTableOneValuePairAPI()
+	{
+		$item = new TableOneValuePair(1, 2, false, 3, 4, true);
+		$this->assertEquals(1, $item->getLoad());
+		$this->assertEquals(2, $item->getArea());
+		$this->assertEquals(false, $item->isExtrapolated());
+		$this->assertEquals(3, $item->getNextLoad());
+		$this->assertEquals(4, $item->getNextArea());
+		$this->assertEquals(true, $item->isNextExtrapolated());
+	}
 }
 
 ?>
