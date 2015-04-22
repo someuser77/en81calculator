@@ -153,7 +153,7 @@ class TableOne extends Table {
 		} else {
 			// interpolate outside table
 			if ($area < $this->maxDefinedArea) {
-				throw new LogicalException('The area '.$area.' was smaller than the last element in the table but no match was found.');
+				throw new LogicException ('The area '.$area.' was smaller than the last element in the table but no match was found.');
 			}
 			
 			$areaMin = $this->maxDefinedArea + floor(($area - 5.0) / 0.16) * 0.16;
