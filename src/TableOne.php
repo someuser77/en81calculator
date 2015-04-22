@@ -96,7 +96,7 @@ class TableOne extends Table {
 	}
 	
 	function findArea($load) {
-		if ($load < $this->load[0]) throw new InvalidArgumentException('The minimal load is '.$load[0]);
+		if ($load < $this->load[0]) throw new InvalidArgumentException('The minimal load is '.$this->load[0]);
 		
 		$idx = $this->findInLoadColumn($load);
 		$found = !($idx < 0);
