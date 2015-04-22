@@ -16,28 +16,6 @@ class TableTwoValue {
 	public function isExtrapolated() { return $this->isExtrapolated; }
 }
 
-class TableTwoValuePair {
-	private $value;
-	private $next;
-	
-	public function __construct($passengers, $area, $isExtrapolated, $nextLoad = null, $nextArea = null, $isNextExtrapolated = null) {
-		$this->value = new TableTwoValue($passengers, $area, $isExtrapolated);
-		if ($nextLoad != null && $nextArea != null && $isNextExtrapolated != null) {
-			$this->next = new TableTwoValue($nextPassengers, $nextArea, $isNextExtrapolated);
-		} else {
-			$this->next = null;
-		}
-	}
-	
-	public function getPassengers() { return $this->value->getPassengers(); }
-	public function getArea() { return $this->value->getArea(); }
-	public function isExtrapolated() { return $this->value->isExtrapolated(); }
-	public function getNextPassengers() { return $this->next->getPassengers(); }
-	public function getNextArea() { return $this->next->getArea(); }
-	public function isNextExtrapolated() { return $this->next->isExtrapolated(); }
-}
-
-
 class TableTwo extends Table {
 	var $passengers;
 	var $area;
@@ -75,7 +53,7 @@ class TableTwo extends Table {
 		$this->maxDefinedArea = $this->area[count($this->area) - 1];
 		$this->areaToAddBeyondTable = 0.115;
 		
-		parent::__construct($this->load, $this->area);
+		parent::__construct($this->passengers, $this->area);
 	}
 	
 	private function findInPassengersColumn($passengers) { return $this->findInFirstColumn($passengers); }
@@ -83,16 +61,41 @@ class TableTwo extends Table {
 	
 	function findArea($passengers) {
 		if (!is_int($passengers)) throw new InvalidArgumentException("'".$passengers."' is not a valid integer.");
+		
 		if ($passengers < 1) throw new InvalidArgumentException("The number of passengers must be more than 0.");
-		if ($passengers < $this->maxDefinedPassengers) 
-			return new TableTwoValuePair($passengers, $this->area[$passengers], false);
-		$extraPassengers = $passengers - $this->maxDefinedPassengers;
-		$area = $this->maxDefinedArea + $extraPassengers * $this->areaToAddBeyondTable;
-		return new TableTwoValuePair($passengers, $area, true, $passengers + 1, $area + $this->areaToAddBeyondTable);
+		
+		if ($passengers <= $this->maxDefinedPassengers) 
+			return new TableTwoValue($passengers, $this->area[$passengers - 1], false);
+		
+		$excessPassengers = $passengers - $this->maxDefinedPassengers;
+		$area = $this->maxDefinedArea + $excessPassengers * $this->areaToAddBeyondTable;
+		
+		return new TableTwoValue($passengers, $area, true);
 	}
 	
 	function findPassengers($area) {
+		if ($area < $this->area[0]) 
+			throw new InvalidArgumentException('The minimal area is '.$this->area[0]);
 		
+		$idx = $this->findInAreaColumn($area);
+		$found = !($idx < 0);
+		
+		if ($found) {
+			if ($this->area[$idx] == $area)
+				return new TableTwoValue($this->passengers[$idx], $area, false);
+			
+			return new TableTwoValue($this->passengers[$idx], $this->area[$idx], false);
+		}
+		
+		// interpolate outside table
+		if ($area < $this->maxDefinedArea)
+			throw new LogicException ('The area '.$area.' was smaller than the last element in the table but no match was found.');
+		
+		$excessArea = $area - $this->maxDefinedArea;
+		
+		$additionalPassengers = floor($excessArea / $this->areaToAddBeyondTable);
+
+		return new TableTwoValue($this->maxDefinedPassengers + $additionalPassengers, $area, true);
 	}
 }
 
