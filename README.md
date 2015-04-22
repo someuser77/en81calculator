@@ -2,5 +2,5 @@
 
 Run tests with:
 ```
-phpunit --bootstrap src\autoload.php tests\TableOneLookupTests.php
+phpunit --bootstrap src\autoload.php tests
 ```
