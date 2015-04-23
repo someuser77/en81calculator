@@ -16,6 +16,7 @@ class TableTwoValue {
 	public function isExtrapolated() { return $this->isExtrapolated; }
 }
 
+// Min area <=> Max nunber of Passengers
 class TableTwo extends Table {
 	var $passengers;
 	var $area;

@@ -38,6 +38,7 @@ class TableOneValuePair {
 	public function isNextExtrapolated() { return $this->next->isExtrapolated(); }
 }
 
+// Min rated load <=> Max allowed area
 class TableOne extends Table {
 	var $load;
 	var $area;
