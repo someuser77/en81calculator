@@ -132,7 +132,7 @@ class TableOneLookupTests extends PHPUnit_Framework_TestCase {
 		$result = $this->tableOne->findArea(10);
     }
 	
-	public function testTableOneValuePairAPI()
+	public function testSimpleTableOneValuePairAPI()
 	{
 		$item = new TableOneValuePair(1, 2, false, 3, 4, true);
 		$this->assertEquals(1, $item->getLoad());
@@ -142,6 +142,23 @@ class TableOneLookupTests extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(4, $item->getNextArea());
 		$this->assertEquals(true, $item->isNextExtrapolated());
 	}
+	
+	public function testIntermediateLoadLookupByTableOneValuePairAPI()
+    {
+		$area = 1.5;
+		$actual = $this->tableOne->findLoad($area);
+		$expectedLoad = (600.0 - 525.0) / (1.6 - 1.45) * ($area - 1.45) + 525;
+		$expected = new TableOneValuePair($expectedLoad, $area, true, 600, 1.6, false);
+        
+        $this->assertEquals($expected, $actual);
+		
+		$this->assertEquals($expectedLoad, $actual->getLoad());
+		$this->assertEquals($area, $actual->getArea());
+		$this->assertEquals(true, $actual->isExtrapolated());
+		$this->assertEquals(600, $actual->getNextLoad());
+		$this->assertEquals(1.6, $actual->getNextArea());
+		$this->assertEquals(false, $actual->isNextExtrapolated());
+    }
 }
 
 ?>

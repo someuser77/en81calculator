@@ -23,7 +23,7 @@ class TableOneValuePair {
 	
 	public function __construct($load, $area, $isExtrapolated, $nextLoad = null, $nextArea = null, $isNextExtrapolated = null) {
 		$this->value = new TableOneValue($load, $area, $isExtrapolated);
-		if ($nextLoad != null && $nextArea != null && $isNextExtrapolated != null) {
+		if ($nextLoad !== null && $nextArea !== null && $isNextExtrapolated !== null) {
 			$this->next = new TableOneValue($nextLoad, $nextArea, $isNextExtrapolated);
 		} else {
 			$this->next = null;
