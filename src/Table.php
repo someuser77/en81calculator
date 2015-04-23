@@ -2,6 +2,7 @@
 abstract class Table {
 	protected $firstColumn;
 	protected $secondColumn;
+	protected $table;
 	
 	function __construct($firstColumn, $secondColumn) {
 		if (!is_array($firstColumn)) throw new InvalidArgumentException('firstColumn is expected to be an array.');
@@ -11,7 +12,10 @@ abstract class Table {
 		}
 		$this->firstColumn = $firstColumn;
 		$this->secondColumn = $secondColumn;
+		$table = array_combine($firstColumn, $secondColumn);
 	}
+	
+	public function getTable() { return $this->table; }
 	
 	private function getSlope($lower_first, $higher_first, $lower_second, $higher_second) {
 		return ($higher_second - $lower_second) / ($higher_first - $lower_first);
