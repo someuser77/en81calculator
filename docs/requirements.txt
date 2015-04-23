@@ -1,0 +1,12 @@
+1) X,Y,F,D checked first for input.
+f and d are optional. -> S
+
+2) S to give minL and maxN
+
+3) interpolated load is an output only field
+
+4) minL => N, Smin, Smax
+
+5) maxN => minL = maxN * 75, Smin by table 1, Smax by table 2 using minL
+
+6) Smin and Smax is an output field only
