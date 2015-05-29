@@ -118,19 +118,28 @@ class TableOne extends Table {
 				throw new LogicalException('The load '.$load.' was smaller than the last element in the table but no match was found.');
 			}
 			
-			$loadMin = floor($load / 100.0) * 100;
-			$loadMax = ceil($load / 100.0) * 100;
+			$excessiveLoad = $load - $this->maxDefinedLoad;
+			$excessiveLoadMin = floor($excessiveLoad / 100.0) * 100;
+			$excessiveLoadMax = ceil($excessiveLoad / 100.0) * 100;
 			
-			$addedSlotMin = ($loadMin - $this->maxDefinedLoad) / 100;
-			$addedSlotMax = ($loadMax - $this->maxDefinedLoad) / 100;
+			$loadMin = $this->maxDefinedLoad + $excessiveLoadMin;
+			$loadMax = $this->maxDefinedLoad + $excessiveLoadMax;
 			
-			$areaMin = $this->maxDefinedArea + $addedSlotMin * 0.16;
-			$areaMax = $this->maxDefinedArea + $addedSlotMax * 0.16;
+			$getArea = function($load) {
+				return $this->maxDefinedArea + $load / 100.0 * 0.16;
+			};			
+			
+			$areaMin = $getArea($excessiveLoadMin);
+			$areaMax = $getArea($excessiveLoadMax);
 			
 			$upperBoundIntrapolated = true;
 		}
 		
-		$area = $this->intrapolateArea($loadMin, $loadMax, $areaMin, $areaMax, $load);
+		if ($areaMin != $areaMax) {
+			$area = $this->intrapolateArea($loadMin, $loadMax, $areaMin, $areaMax, $load);
+		} else {
+			$area = $areaMin;
+		}
 		
 		return new TableOneValuePair($load, $area, true, $loadMax, $areaMax, $upperBoundIntrapolated);
 	}
@@ -157,14 +166,19 @@ class TableOne extends Table {
 				throw new LogicException ('The area '.$area.' was smaller than the last element in the table but no match was found.');
 			}
 			
-			$areaMin = $this->maxDefinedArea + floor(($area - 5.0) / 0.16) * 0.16;
-			$areaMax = $this->maxDefinedArea + ceil(($area - 5.0) / 0.16) * 0.16;
+			$excessiveArea = $area - $this->maxDefinedArea;
+			$excessiveAreaMin = floor($excessiveArea / 0.16) * 0.16;
+			$excessiveAreaMax = ceil($excessiveArea / 0.16) * 0.16;
 			
-			$addedSlotMin = floor(($area - 5.0) / 0.16);
-			$addedSlotMax = ceil(($area - 5.0) / 0.16);
+			$areaMin = $this->maxDefinedArea + $excessiveAreaMin;
+			$areaMax = $this->maxDefinedArea + $excessiveAreaMax;
 			
-			$loadMin = $this->maxDefinedLoad + $addedSlotMin * 100;
-			$loadMax = $this->maxDefinedLoad + $addedSlotMax * 100;
+			$getLoad = function($area) {
+				return $this->maxDefinedLoad + $area / 0.16 * 100;
+			};			
+			
+			$loadMin = $getLoad($excessiveAreaMin);
+			$loadMax = $getLoad($excessiveAreaMax);			
 			
 			$upperBoundIntrapolated = true;
 		}

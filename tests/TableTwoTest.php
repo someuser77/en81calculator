@@ -115,6 +115,17 @@ class TableTwoLookupTests extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(2, $item->getArea());
 		$this->assertEquals(true, $item->isExtrapolated());
 	}
+	
+	public function testFindAreaForLargePassengers()
+	{
+		$passengers = 114;
+		$result = $this->tableTwo->findArea($passengers);
+		
+		$expectedArea = 3.13 + (114.0 - 20.0) * 0.115;
+		$expected = new TableTwoValue($passengers, $expectedArea, true);
+        
+        $this->assertEquals($expected, $result);
+	}
 }
 
 ?>

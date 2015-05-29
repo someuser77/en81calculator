@@ -159,6 +159,17 @@ class TableOneLookupTests extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1.6, $actual->getNextArea());
 		$this->assertEquals(false, $actual->isNextExtrapolated());
     }
+	
+	public function testFindAreaForLargeRoundLoad()
+	{
+		$load = 10000;
+		$result = $this->tableOne->findArea($load);
+		
+		$expectedArea = 5.0 + (10000.0 - 2500.0) / 100.0 * 0.16;
+		$expected = new TableOneValuePair($load, $expectedArea, true, $load, $expectedArea, true);
+        
+        $this->assertEquals($expected, $result);
+	}
 }
 
 ?>
