@@ -34,8 +34,8 @@ class EN81Calculator
 			return $result->getNextArea();
 	}
 	
-	function getMinArea($minLoad) {
-		$passengers = intval(floor($minLoad / 75.0));
+	function getMinArea($passengers) {
+		$passengers = intval($passengers);
 		$result = $this->tableTwo->findArea($passengers);
 		return $result->getArea();
 	}

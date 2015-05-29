@@ -38,7 +38,7 @@ class EN81Tests extends PHPUnit_Framework_TestCase {
 	
 	function testGetMinArea() {
 		$expected = 2.85;
-		$actual = $this->en81->getMinArea(1351);
+		$actual = $this->en81->getMinArea(18);
 		$this->assertEquals($expected, $actual);
 	}
 	

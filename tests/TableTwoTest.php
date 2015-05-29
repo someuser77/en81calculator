@@ -121,7 +121,7 @@ class TableTwoLookupTests extends PHPUnit_Framework_TestCase {
 		$passengers = 114;
 		$result = $this->tableTwo->findArea($passengers);
 		
-		$expectedArea = 3.13 + (114.0 - 20.0) * 0.115;
+		$expectedArea = 3.13 + ($passengers - 20.0) * 0.115;
 		$expected = new TableTwoValue($passengers, $expectedArea, true);
         
         $this->assertEquals($expected, $result);
