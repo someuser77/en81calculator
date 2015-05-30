@@ -18,7 +18,11 @@ class EN81Calculator
 	function getMinLoadByArea($area) {
 		$this->ensureNumeric($area);
 		$result = $this->tableOne->findLoad($area);
-		return $result->getNextLoad();
+		
+		if ($result->getArea() == $area)
+			return $result->getLoad();
+		else
+			return $result->getNextLoad();
 	}
 	
 	function getInterpolatedLoadByArea($area) {
