@@ -47,6 +47,18 @@ class EN81Tests extends PHPUnit_Framework_TestCase {
 		$actual = $this->en81->getPassengersByLoad(1351);
 		$this->assertEquals($expected, $actual);
 	}
+	
+	/**
+     * @expectedException InvalidArgumentException
+     */
+	public function testInputStringIsRejected()
+	{
+		$area = 1.1 * 2.1 + 0.08 * 0.9 + 0.04 * 0.45; // = 2.4
+		$area = (string)$area;
+		$result = $this->en81->getMinLoadByArea($area);
+		
+		$this->assertEquals(1050, $result);
+	}
 }
 
 ?>
