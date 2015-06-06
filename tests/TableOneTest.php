@@ -137,10 +137,10 @@ class TableOneLookupTests extends PHPUnit_Framework_TestCase {
 		$item = new TableOneValuePair(1, 2, false, 3, 4, true);
 		$this->assertEquals(1, $item->getLoad());
 		$this->assertEquals(2, $item->getArea());
-		$this->assertEquals(false, $item->isExtrapolated());
+		$this->assertEquals(false, $item->isInterpolated());
 		$this->assertEquals(3, $item->getNextLoad());
 		$this->assertEquals(4, $item->getNextArea());
-		$this->assertEquals(true, $item->isNextExtrapolated());
+		$this->assertEquals(true, $item->isNextInterpolated());
 	}
 	
 	public function testIntermediateLoadLookupByTableOneValuePairAPI()
@@ -154,10 +154,10 @@ class TableOneLookupTests extends PHPUnit_Framework_TestCase {
 		
 		$this->assertEquals($expectedLoad, $actual->getLoad());
 		$this->assertEquals($area, $actual->getArea());
-		$this->assertEquals(true, $actual->isExtrapolated());
+		$this->assertEquals(true, $actual->isInterpolated());
 		$this->assertEquals(600, $actual->getNextLoad());
 		$this->assertEquals(1.6, $actual->getNextArea());
-		$this->assertEquals(false, $actual->isNextExtrapolated());
+		$this->assertEquals(false, $actual->isNextInterpolated());
     }
 	
 	public function testFindAreaForLargeRoundLoad()

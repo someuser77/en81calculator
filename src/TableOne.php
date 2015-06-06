@@ -4,25 +4,25 @@ class TableOneValue {
 	
 	private $load;
 	private $area;
-	private $isExtrapolated;
+	private $isInterpolated;
 	
-	function __construct($load, $area, $isExtrapolated) {
+	function __construct($load, $area, $isInterpolated) {
 		$this->load = $load;
 		$this->area = $area;
-		$this->isExtrapolated = $isExtrapolated;
+		$this->isInterpolated = $isInterpolated;
 	}
 	
 	public function getLoad() { return $this->load; }
 	public function getArea() { return $this->area; }
-	public function isExtrapolated() { return $this->isExtrapolated; }
+	public function isInterpolated() { return $this->isInterpolated; }
 }
 
 class TableOneValuePair {
 	private $value;
 	private $next;
 	
-	public function __construct($load, $area, $isExtrapolated, $nextLoad = null, $nextArea = null, $isNextExtrapolated = null) {
-		$this->value = new TableOneValue($load, $area, $isExtrapolated);
+	public function __construct($load, $area, $isInterpolated, $nextLoad = null, $nextArea = null, $isNextExtrapolated = null) {
+		$this->value = new TableOneValue($load, $area, $isInterpolated);
 		if ($nextLoad !== null && $nextArea !== null && $isNextExtrapolated !== null) {
 			$this->next = new TableOneValue($nextLoad, $nextArea, $isNextExtrapolated);
 		} else {
@@ -32,10 +32,10 @@ class TableOneValuePair {
 	
 	public function getLoad() { return $this->value->getLoad(); }
 	public function getArea() { return $this->value->getArea(); }
-	public function isExtrapolated() { return $this->value->isExtrapolated(); }
+	public function isInterpolated() { return $this->value->isInterpolated(); }
 	public function getNextLoad() { return $this->next->getLoad(); }
 	public function getNextArea() { return $this->next->getArea(); }
-	public function isNextExtrapolated() { return $this->next->isExtrapolated(); }
+	public function isNextInterpolated() { return $this->next->isInterpolated(); }
 }
 
 // Min rated load <=> Max allowed area
