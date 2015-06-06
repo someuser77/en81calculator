@@ -19,10 +19,10 @@ class EN81Calculator
 		$this->ensureNumeric($area);
 		$result = $this->tableOne->findLoad($area);
 		
-		if ($result->getArea() == $area)
-			return $result->getLoad();
-		else
+		if ($result->isInterpolated())
 			return $result->getNextLoad();
+		else
+			return $result->getLoad();
 	}
 	
 	function getInterpolatedLoadByArea($area) {

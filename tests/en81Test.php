@@ -6,9 +6,15 @@ class EN81Tests extends PHPUnit_Framework_TestCase {
 		$this->en81 = new EN81Calculator();
 	}
 	
-	function testGetMinLoadByArea() {
+	function testGetMinLoadByAreaInterpolated() {
 		$expected = 525;
 		$actual = $this->en81->getMinLoadByArea(1.31);
+		$this->assertEquals($expected, $actual);
+	}
+	
+	function testGetMinLoadByAreaExact() {
+		$expected = 450;
+		$actual = $this->en81->getMinLoadByArea(1.30);
 		$this->assertEquals($expected, $actual);
 	}
 	
